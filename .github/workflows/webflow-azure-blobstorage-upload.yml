@@ -13,5 +13,5 @@ jobs:
         with:
           source_dir: 'unzipped'
           container_name: '$web'
-          connection_string: ${{ secrets.ConnectionString }}
+          connection_string: ${{ inputs.connectionstring }}
           sync: 'true'
