@@ -1,0 +1,33 @@
+name: String Replace
+description: "Replaces strings in files."
+
+inputs:
+  replacement_file:
+    description: "Path to file specifiying the replacements."
+    required: true
+  dir:
+    description: "Directory in which the files to be edited are stored. Will be prefixxed to the file names specified in the replacement file."
+    required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2
+
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.10.7"
+
+      - name: install python packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ../../string_replace/requirements.txt
+
+      - name: execute python script
+        env:
+          - REPLACEMENTS_FILE: ${{ inputs.replacement_file }}
+          - EDITS_DIR: ${{ inputs.dir }}
+        run: python ../../string_replace/string_replace.py
