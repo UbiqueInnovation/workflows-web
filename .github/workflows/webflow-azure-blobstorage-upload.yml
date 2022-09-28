@@ -19,12 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: unzip ${{ inputs.project_name }}.webflow.zip -d unzipped
-      - name: Replace content
-        if: ${{ inputs.replacement_file != ''}}
-        uses: './.github/workflows/string-replace'
-          with:
-            replacement_file: ${{ inputs.replacement_file }}
-            dir:  "unzipped"
       - uses: bacongobbler/azure-blob-storage-upload@874139251d8ba621ed4080cce9b5ebd0fcc019a2
         with:
           source_dir: "unzipped"
