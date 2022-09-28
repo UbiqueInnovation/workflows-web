@@ -5,13 +5,16 @@ on:
     inputs:
       project_name:
         description: "Name of the webflow project so that '<project_name>.webflow.zip' matches the name of the webflow export."
-        required: true
-      connection_string:
-        description: "The connection string for the storage account."
+        type: string
         required: true
       replacement_file:
         description: "YAML file specifying edits to make to the webflow exported files."
+        type: string
         required: false
+    secrets:
+      connection_string:
+        description: "The connection string for the storage account."
+        required: true
 
 jobs:
   upload:
@@ -23,5 +26,5 @@ jobs:
         with:
           source_dir: "unzipped"
           container_name: "$web"
-          connection_string: ${{ inputs.connection_string }}
+          connection_string: ${{ secrets.connection_string }}
           sync: "true"
