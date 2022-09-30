@@ -1,4 +1,0 @@
-edits:
-  - file: "filename"
-    pattern: "regex pattern"
-    replace: "replacement string"

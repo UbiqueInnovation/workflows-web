@@ -1,0 +1,14 @@
+name: String Replace
+description: "Replaces strings in files."
+
+inputs:
+  replacement_file:
+    description: "Path to file specifiying the replacements."
+    required: true
+  dir:
+    description: "Directory in which the files to be edited are stored. Will be prefixxed to the file names specified in the replacement file."
+    required: false
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
