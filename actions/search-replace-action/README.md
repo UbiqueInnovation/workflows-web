@@ -12,7 +12,7 @@ The `replacement_file` input is the path to the file specifying the replacements
   .
   .
     steps:
-      - uses: "./actions/search-replace-action"
+      - uses: UbiqueInnovation/workflows-web/workflows/webflow-azure-blobstorage-upload.yml@SB-59
         with:
           replacement_file: <replacement_file>
           dir: "unzipped"
