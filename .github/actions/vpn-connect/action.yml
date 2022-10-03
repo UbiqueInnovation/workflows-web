@@ -1,0 +1,27 @@
+name: "OpenVPN-Connect"
+description: "connect to OpenVPN server"
+branding:
+  icon: "lock"
+  color: "green"
+inputs:
+  config_file:
+    description: "Location of OpenVPN client config file"
+    required: true
+  tls_auth_key:
+    description: "Pre-shared secret for TLS-auth HMAC signature"
+    required: true
+  client_key:
+    description: "Local peer's private key"
+    required: true
+  certificate_authority:
+    description: "Certificate authority (CA), also referred to
+      as the root certificate."
+    required: true
+  certificate:
+    description: "Local peer's signed certificate -- must be signed
+      by a certificate authority specified in 'certificate_authority'."
+    required: true
+runs:
+  using: "node12"
+  main: "src/index.js"
+  post: "src/index.js"
