@@ -1,17 +1,36 @@
 ---
 name: Upload Zip Exported From Webflow To Azure Blob Storage
 on:
-  workflow_dispatch:
-    
+  workflow_call:
+    inputs:
+      project_name:
+        description: "Name of the webflow project so that '<project_name>.webflow.zip' matches the name of the webflow export."
+        type: string
+        required: true
+      replacement_file:
+        description: "YAML file specifying edits to make to the webflow exported files."
+        type: string
+        required: false
+    secrets:
+      connection_string:
+        description: "The connection string for the storage account."
+        required: true
+
 jobs:
   upload:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: unzip ${{ inputs.projectname }}.webflow.zip -d unzipped
+      - run: unzip ${{ inputs.project_name }}.webflow.zip -d unzipped
+      - name: replace
+        if: ${{ inputs.replacement_file != ''}}
+        uses: "./actions/search-replace-action"
+        with:
+          replacement_file: ${{ inputs.replacement_file }}
+          dir: "unzipped"
       - uses: bacongobbler/azure-blob-storage-upload@874139251d8ba621ed4080cce9b5ebd0fcc019a2
         with:
-          source_dir: 'unzipped'
-          container_name: '$web'
-          connection_string: ${{ inputs.connectionstring }}
-          sync: 'true'
+          source_dir: "unzipped"
+          container_name: "$web"
+          connection_string: ${{ secrets.connection_string }}
+          sync: "true"
