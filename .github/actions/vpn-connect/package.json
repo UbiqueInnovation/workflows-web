@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "ncc build src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Marc Widmer (widmer@ubique.ch)",
@@ -13,5 +14,8 @@
     "@actions/github": "^5.1.1",
     "shelljs.exec": "^1.1.8",
     "tail": "^2.2.4"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.34.0"
   }
 }
