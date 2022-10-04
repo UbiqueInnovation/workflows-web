@@ -3106,12 +3106,12 @@ const run = (callback) => {
   }
 
   if (certificate_authority) {
-    fs.appendFileSync(configFile, "ca ca.cert 1\n");
+    fs.appendFileSync(configFile, "ca ca.cert\n");
     fs.writeFileSync("ca.cert", certificate_authority);
   }
 
   if (certificate) {
-    fs.appendFileSync(configFile, "cert cert.cert 1\n");
+    fs.appendFileSync(configFile, "cert cert.cert\n");
     fs.writeFileSync("cert.cert", certificate_authority);
   }
 
