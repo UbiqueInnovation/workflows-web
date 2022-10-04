@@ -1,6 +1,6 @@
 const core = require("@actions/core");
 const coreCommand = require("@actions/core/lib/command");
-const main = require("./main");
+const setup = require("./setup");
 const post = require("./post");
 
 const isPost = !!process.env.STATE_isPost;
@@ -14,9 +14,11 @@ if (isPost) {
     core.setFailed(error.message);
   }
 } else {
-  // main
+  // setup
   try {
-    main((pid) => coreCommand.issueCommand("save-state", { name: "pid" }, pid));
+    setup((pid) =>
+      coreCommand.issueCommand("save-state", { name: "pid" }, pid)
+    );
   } catch (error) {
     core.setFailed(error.message);
   } finally {
