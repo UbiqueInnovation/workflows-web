@@ -36,7 +36,7 @@ const run = (callback) => {
 
   if (certificate) {
     fs.appendFileSync(configFile, "cert cert.cert\n");
-    fs.writeFileSync("cert.cert", certificate_authority);
+    fs.writeFileSync("cert.cert", certificate);
   }
 
   core.info("========== begin configuration ==========");
