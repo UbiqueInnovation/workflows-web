@@ -47,3 +47,7 @@ via [encrypted secrets](https://docs.github.com/en/actions/security-guides/encry
     certificate: ${{ secrets.OVPN_CERT }}
 # The openvpn process is automatically terminated in post-action phase
 ```
+
+## Development
+
+When editing the source javascript files, don't forget to 'build' them with `npm run build`. This uses Vercel's [ncc](https://github.com/vercel/ncc) tool to compile modules into a single file including their dependencies.
