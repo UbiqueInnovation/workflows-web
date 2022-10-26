@@ -22,6 +22,6 @@ inputs:
       by a certificate authority specified in 'certificate_authority'."
     required: true
 runs:
-  using: "node12"
+  using: "node16"
   main: "dist/index.js"
   post: "dist/index.js"
