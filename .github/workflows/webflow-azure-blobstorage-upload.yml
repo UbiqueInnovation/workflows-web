@@ -34,3 +34,4 @@ jobs:
           container_name: "$web"
           connection_string: ${{ secrets.connection_string }}
           sync: "true"
+          cli_version: "2.42.0"
