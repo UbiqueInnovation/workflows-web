@@ -28,7 +28,7 @@ jobs:
         with:
           replacement_file: ${{ inputs.replacement_file }}
           dir: "unzipped"
-      - uses: bacongobbler/azure-blob-storage-upload@874139251d8ba621ed4080cce9b5ebd0fcc019a2
+      - uses: bacongobbler/azure-blob-storage-upload@ec64da8ff7ee6a813893cd3d68a7e360b93c5484
         with:
           source_dir: "unzipped"
           container_name: "$web"
