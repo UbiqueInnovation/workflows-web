@@ -34,11 +34,18 @@ jobs:
         with:
           replacement_file: ${{ inputs.replacement_file }}
           dir: "unzipped"
-      - uses: bacongobbler/azure-blob-storage-upload@ec64da8ff7ee6a813893cd3d68a7e360b93c5484
+      - name: Upload to Blob Storage
+        uses: azure/CLI@v1
         with:
-          source_dir: "unzipped"
-          container_name: "$web"
-          connection_string: ${{ secrets.connection_string }}
-          sync: "true"
-          cli_version: "2.42.0"
-          extra_args: '--content-cache-control "${{inputs.cache_control}}"'
+          azcliversion: 2.26.1
+          inlineScript: |
+            az storage blob upload-batch --connection-string "${{ secrets.RegaDevConnectionString }}" --source 'unzipped' --destination '$web' --content-cache '${{inputs.cache_contol}}'
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
+      - name: Remove old files from Blob Storage
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.26.1
+          inlineScript: |
+            az storage blob delete-batch --connection-string "${{ secrets.RegaDevConnectionString }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
