@@ -11,6 +11,12 @@ on:
         description: "YAML file specifying edits to make to the webflow exported files."
         type: string
         required: false
+      cache_control:
+        description: "Cache control string az's '--content-cache' flag. Default: 'max-age=21600'"
+        type: string
+        default: "max-age: 21600"
+        required: false
+
     secrets:
       connection_string:
         description: "The connection string for the storage account."
@@ -28,10 +34,18 @@ jobs:
         with:
           replacement_file: ${{ inputs.replacement_file }}
           dir: "unzipped"
-      - uses: bacongobbler/azure-blob-storage-upload@ec64da8ff7ee6a813893cd3d68a7e360b93c5484
+      - name: Upload to Blob Storage
+        uses: azure/CLI@v1
         with:
-          source_dir: "unzipped"
-          container_name: "$web"
-          connection_string: ${{ secrets.connection_string }}
-          sync: "true"
-          cli_version: "2.42.0"
+          azcliversion: 2.26.1
+          inlineScript: |
+            az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache '${{inputs.cache_contol}}'
+      - name: Get current date
+        id: date
+        run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
+      - name: Remove old files from Blob Storage
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.26.1
+          inlineScript: |
+            az storage blob delete-batch --connection-string "${{ secrets.connection_string }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
