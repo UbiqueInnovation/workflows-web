@@ -12,7 +12,7 @@ on:
         type: string
         required: false
       cache_control:
-        description: "Cache control string az's 'cache-control' flag. Default: 'max-age=21600'"
+        description: "Cache control string az's '--content-cache-control' flag. Default: 'max-age=21600'"
         type: string
         default: "max-age: 21600"
         required: false
@@ -41,4 +41,4 @@ jobs:
           connection_string: ${{ secrets.connection_string }}
           sync: "true"
           cli_version: "2.42.0"
-          extra_args: '--cache-control "${{inputs.cache_control}}"'
+          extra_args: '--content-cache-control "${{inputs.cache_control}}"'
