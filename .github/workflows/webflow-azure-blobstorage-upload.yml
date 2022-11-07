@@ -12,7 +12,7 @@ on:
         type: string
         required: false
       cache_control:
-        description: "Cache control string az's '--content-cache-control' flag. Default: 'max-age=21600'"
+        description: "Cache control string az's '--content-cache' flag. Default: 'max-age=21600'"
         type: string
         default: "max-age: 21600"
         required: false
@@ -39,7 +39,7 @@ jobs:
         with:
           azcliversion: 2.26.1
           inlineScript: |
-            az storage blob upload-batch --connection-string "${{ secrets.RegaDevConnectionString }}" --source 'unzipped' --destination '$web' --content-cache '${{inputs.cache_contol}}'
+            az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache '${{inputs.cache_contol}}'
       - name: Get current date
         id: date
         run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
@@ -48,4 +48,4 @@ jobs:
         with:
           azcliversion: 2.26.1
           inlineScript: |
-            az storage blob delete-batch --connection-string "${{ secrets.RegaDevConnectionString }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
+            az storage blob delete-batch --connection-string "${{ secrets.connection_string }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
