@@ -1,4 +1,4 @@
-name: Build and Push Docker Images on release/
+name: Build and Push Docker Images on release - self hosted
 on:
   workflow_call:
     inputs:
@@ -63,7 +63,7 @@ on:
 jobs:
   build:
     name: Build Project
-    runs-on: ubuntu-latest
+    runs-on: ["self-hosted", "linux"]
     steps:
       - uses: actions/checkout@v3
 
