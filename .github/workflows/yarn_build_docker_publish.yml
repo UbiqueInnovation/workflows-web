@@ -67,12 +67,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v3
+      - name: Setup Nodejs and npm
+        uses: actions/setup-node@v3
         with:
           node-version: "${{ inputs.node_version }}"
-          check-latest: true
-          cache: "yarn"
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
+      - name: Setup Nodejs with yarn caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ inputs.node_version }}"
+          cache: yarn
           cache-dependency-path: "${{ inputs.app_directory }}/${{ inputs.cache_dependency_path }}"
+
+      - name: Install dependencies
+        run: yarn
 
       - uses: actions/setup-python@v4
         if: ${{ inputs.run_poeditor }}
