@@ -47,11 +47,11 @@ on:
         type: boolean
 
     secrets:
-      acr_registry:
+      registry:
         required: true
-      acr_username:
+      username:
         required: true
-      acr_password:
+      password:
         required: true
       poeditor_api_key:
         required: false
@@ -112,7 +112,7 @@ jobs:
         run: echo "IMAGE_NAME=${{ inputs.app_name }}${{ inputs.image_name_postfix }}-${{ inputs.release_env }}" >> $GITHUB_ENV
 
       - name: Log into registry
-      - run: docker login ${{secrets.registry}} -u ${{secrets.registry_user}} -p ${{secrets.registry_password}}
+      - run: docker login ${{secrets.registry}} -u ${{secrets.registry_username}} -p ${{secrets.registry_password}}
 
       - name: Publish image
       - run: |
