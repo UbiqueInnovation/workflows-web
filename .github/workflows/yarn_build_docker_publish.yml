@@ -123,7 +123,7 @@ jobs:
         run: echo "IMAGE_NAME=${{ inputs.app_name }}${{ inputs.image_name_postfix }}-${{ inputs.release_env }}" >> $GITHUB_ENV
 
       - name: Log into registry
-        run: echo ${{ secrets.registry_password }} | docker login ${{ secrets.registry }} --username ${{ secrets.registry_username }} --password-stdin
+        run: echo ${{ secrets.password }} | docker login ${{ secrets.registry }} --username ${{ secrets.username }} --password-stdin
 
       - name: Publish image
         run: |
