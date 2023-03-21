@@ -1,0 +1,102 @@
+name: Build a project with yarn - self-hosted
+on:
+  workflow_call:
+    inputs:
+      ref_name:
+        required: true
+        type: string
+        description: tag or branch name
+      node_version:
+        default: "16"
+        type: string
+        required: false
+      cache_dependency_path:
+        default: "yarn.lock"
+        type: string
+        required: false
+      release_env:
+        required: true
+        type: string
+        description: 'ENV to build. dev|prod. runs "yarn run build${build_cmd_postfix}:${release_env}"'
+      build_cmd_postfix:
+        required: false
+        default: ""
+        type: string
+        description: 'Runs "yarn run build${build_cmd_postfix}:${release_env}"'
+      app_directory:
+        required: true
+        type: string
+        description: directory that contains the package.json
+      run_poeditor:
+        required: false
+        default: false
+        type: boolean
+      output_directory:
+        required: true
+        default: "build"
+        type: string
+        description: output directory for the bundle
+
+    secrets:
+      registry:
+        required: true
+      username:
+        required: true
+      password:
+        required: true
+      poeditor_api_key:
+        required: false
+        description: necessary if input.run_poeditor is true
+      poeditor_project_id:
+        required: false
+        description: necessary if input.run_poeditor is true
+
+jobs:
+  build:
+    name: Build Project
+    runs-on: ["self-hosted", "linux"]
+    steps:
+      - name: Setup Nodejs and npm
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ inputs.node_version }}"
+
+      - name: Setup yarn
+        run: npm install -g yarn
+
+      - name: Setup Nodejs with yarn caching
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ inputs.node_version }}"
+          cache: yarn
+          cache-dependency-path: "${{ inputs.app_directory }}/${{ inputs.cache_dependency_path }}"
+
+      - name: Install dependencies
+        run: yarn
+
+      - uses: actions/setup-python@v4
+        if: ${{ inputs.run_poeditor }}
+        with:
+          python-version: "3.x"
+          cache: "pip"
+
+      - name: Check requirements.txt existence
+        if: ${{ inputs.run_poeditor }}
+        id: check_requirements_txt
+        uses: andstor/file-existence-action@20b4d2e596410855db8f9ca21e96fbe18e12930b
+        with:
+          files: "requirements.txt"
+
+      - name: Install required python module using pip
+        if: ${{ steps.check_requirements_txt.outputs.files_exists == 'true' }}
+        run: |
+          python -m pip install -r requirements.txt
+      - name: Run getTranslations.py
+        if: ${{ inputs.run_poeditor }}
+        run: |
+          python ${{ inputs.app_directory }}/getTranslations.py ${{ secrets.poeditor_api_key }} ${{ secrets.poeditor_project_id }}
+      - name: Build using yarn
+        run: |
+          yarn --cwd ${{ inputs.app_directory }}
+          yarn --cwd ${{ inputs.app_directory }} run build${{ inputs.build_cmd_postfix }}:${{ inputs.release_env }}
+          cp -r ${{ inputs.app_directory }}/build ${{ inputs.output_directory }}
