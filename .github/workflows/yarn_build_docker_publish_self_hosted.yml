@@ -45,6 +45,11 @@ on:
         required: false
         default: false
         type: boolean
+      tar_directory:
+        required: false
+        default: ""
+        type: string
+        description: Change to this directory before packaging files as tar.gz. For regular web builds this would usually be 'build'
 
     secrets:
       registry:
@@ -63,7 +68,7 @@ on:
 jobs:
   build:
     name: Build Project
-    runs-on: [ "self-hosted", "linux" ]
+    runs-on: ["self-hosted", "linux"]
     steps:
       - uses: actions/checkout@v3
 
@@ -110,7 +115,8 @@ jobs:
         run: |
           yarn --cwd ${{ inputs.app_directory }}
           yarn --cwd ${{ inputs.app_directory }} run build${{ inputs.build_cmd_postfix }}:${{ inputs.release_env }}
-          tar -czvf docker/${{ inputs.app_name }}/bin/${{ inputs.app_name }}.tar.gz -C ${{ inputs.app_directory }}/build .
+          tar -czvf docker/${{ inputs.app_name }}/bin/${{ inputs.app_name }}.tar.gz -C ${{ inputs.app_directory }}/${{ inputs.tar_directory }} .
+
       - name: Set TAG_NAME with commit hash
         if: ${{ inputs.tag_add_commithash }}
         run: echo "TAG_NAME=${{ inputs.ref_name }}-${GITHUB_SHA::8}" >> $GITHUB_ENV
