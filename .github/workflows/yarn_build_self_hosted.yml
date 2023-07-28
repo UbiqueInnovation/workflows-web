@@ -54,7 +54,7 @@ on:
 jobs:
   build:
     name: Build Project
-    runs-on: ["self-hosted", "linux"]
+    runs-on: ["self-hosted", "linux", "stable"]
     steps:
       - name: Setup Nodejs and npm
         uses: actions/setup-node@v3
