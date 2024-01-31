@@ -7,6 +7,10 @@ on:
         description: "Name of the webflow project so that '<project_name>.webflow.zip' matches the name of the webflow export."
         type: string
         required: true
+      static_folder:
+        description: "Name of the folder with static files which should be added."
+        type: string
+        required: false
       replacement_file:
         description: "YAML file specifying edits to make to the webflow exported files."
         type: string
@@ -35,7 +39,8 @@ jobs:
           replacement_file: ${{ inputs.replacement_file }}
           dir: "unzipped"
       - name: Merge Webflow with other required (static) files
-        run: if [ -d "static" ]; then cp -R -a static/. unzipped/ fi
+        if: ${{ inputs.static_folder != ''}}
+        run: if [ -d ${{ inputs.static_folder }} ]; then cp -R -a ${{ inputs.static_folder }}/. unzipped/ fi
       - name: Upload to Blob Storage
         uses: azure/CLI@v1
         with:
