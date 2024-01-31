@@ -34,6 +34,8 @@ jobs:
         with:
           replacement_file: ${{ inputs.replacement_file }}
           dir: "unzipped"
+      - name: Merge Webflow with other required (static) files
+        run: if [ -d "static" ]; then cp -R -a static/. unzipped/ fi
       - name: Upload to Blob Storage
         uses: azure/CLI@v1
         with:
