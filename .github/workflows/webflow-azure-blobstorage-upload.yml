@@ -46,7 +46,7 @@ jobs:
         with:
           azcliversion: 2.26.1
           inlineScript: |
-            az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache "${{ inputs.cache_contol }}"
+            az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache "${{ inputs.cache_control }}"
       - name: Get current date
         id: date
         run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
