@@ -18,7 +18,7 @@ on:
       cache_control:
         description: "Cache control string az's '--content-cache' flag. Default: 'max-age=21600'"
         type: string
-        default: "max-age: 21600"
+        default: "max-age=21600"
         required: false
 
     secrets:
