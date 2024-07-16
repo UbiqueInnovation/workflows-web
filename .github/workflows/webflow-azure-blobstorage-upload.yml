@@ -1,60 +1,60 @@
 ---
 name: Upload Zip Exported From Webflow To Azure Blob Storage
 on:
-  workflow_call:
-    inputs:
-      project_name:
-        description: "Name of the webflow project so that '<project_name>.webflow.zip' matches the name of the webflow export."
-        type: string
-        required: true
-      static_folder:
-        description: "Name of the folder with static files which should be added."
-        type: string
-        required: false
-      replacement_file:
-        description: "YAML file specifying edits to make to the webflow exported files."
-        type: string
-        required: false
-      cache_control:
-        description: "Cache control string az's '--content-cache' flag. Default: 'max-age=21600'"
-        type: string
-        default: "max-age=21600"
-        required: false
+    workflow_call:
+        inputs:
+            project_name:
+                description: "Name of the webflow project so that '<project_name>.webflow.zip' matches the name of the webflow export."
+                type: string
+                required: true
+            static_folder:
+                description: "Name of the folder with static files which should be added."
+                type: string
+                required: false
+            replacement_file:
+                description: "YAML file specifying edits to make to the webflow exported files."
+                type: string
+                required: false
+            cache_control:
+                description: "Cache control string az's '--content-cache' flag. Default: 'max-age=21600'"
+                type: string
+                default: "max-age=21600"
+                required: false
 
-    secrets:
-      connection_string:
-        description: "The connection string for the storage account."
-        required: true
+        secrets:
+            connection_string:
+                description: "The connection string for the storage account."
+                required: true
 
 jobs:
-  upload:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with: 
-          lfs: 'true'
-      - run: unzip ${{ inputs.project_name }}.webflow.zip -d unzipped
-      - name: replace
-        if: ${{ inputs.replacement_file != ''}}
-        uses: "./actions/search-replace-action"
-        with:
-          replacement_file: ${{ inputs.replacement_file }}
-          dir: "unzipped"
-      - name: Merge Webflow with other required (static) files
-        if: ${{ inputs.static_folder != ''}}
-        run: cp -R -a ${{ inputs.static_folder }}/. unzipped/
-      - name: Upload to Blob Storage
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.26.1
-          inlineScript: |
-            az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache "${{ inputs.cache_control }}"
-      - name: Get current date
-        id: date
-        run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
-      - name: Remove old files from Blob Storage
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.26.1
-          inlineScript: |
-            az storage blob delete-batch --connection-string "${{ secrets.connection_string }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
+    upload:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v4
+                with:
+                    lfs: 'true'
+            -   run: unzip ${{ inputs.project_name }}.webflow.zip -d unzipped
+            -   name: replace
+                if: ${{ inputs.replacement_file != ''}}
+                uses: "./actions/search-replace-action"
+                with:
+                    replacement_file: ${{ inputs.replacement_file }}
+                    dir: "unzipped"
+            -   name: Merge Webflow with other required (static) files
+                if: ${{ inputs.static_folder != ''}}
+                run: cp -R -a ${{ inputs.static_folder }}/. unzipped/
+            -   name: Upload to Blob Storage
+                uses: azure/CLI@v1
+                with:
+                    azcliversion: 2.26.1
+                    inlineScript: |
+                        az storage blob upload-batch --connection-string "${{ secrets.connection_string }}" --source 'unzipped' --destination '$web' --content-cache "${{ inputs.cache_control }}"
+            -   name: Get current date
+                id: date
+                run: echo "date=$(date -d '1 day ago' '+%Y-%m-%dT%H:%MZ')" >> $GITHUB_OUTPUT
+            -   name: Remove old files from Blob Storage
+                uses: azure/CLI@v1
+                with:
+                    azcliversion: 2.26.1
+                    inlineScript: |
+                        az storage blob delete-batch --connection-string "${{ secrets.connection_string }}" --source '$web' --if-unmodified-since "${{steps.date.outputs.date}}"
